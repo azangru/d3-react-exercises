@@ -3,16 +3,20 @@ import { line, curveCardinal } from 'd3';
 import { useSpring, animated } from 'react-spring';
 
 
-const ys = [25, 30, 45, 60, 20, 65, 75];
-const getCoords = (ys: number[]): [number, number][] => ys.map((y, index) => [(index + 1) * 50, y]);
+const MAX_CHANGE_COEFFICIENT = 3;
+
+const ys = [0, 25, 30, 45, 60, 20, 65, 75];
+const getCoords = (ys: number[]): [number, number][] => ys.map((y, index) => [(index + 1) * 50, chartHeight - y]);
 const getCoefficient = () => Math.random() * 3;
+const chartHeight = ys.reduce((max, y): number => {
+  const maxY = y * MAX_CHANGE_COEFFICIENT;
+  return maxY > max ? maxY : max;
+}, 0);
 
 const LineChart = () => {
   const lineGenerator = line()
     .curve(curveCardinal);
   const initialCoords = getCoords(ys);
-
-  // const myLine = lineGenerator(coords) as string;
 
   const [animatedCoords, setAnimatedCoords] = useSpring(() => ({ coords: lineGenerator(initialCoords) as string }));
 
@@ -26,15 +30,8 @@ const LineChart = () => {
     }, 1000);
   }, []);
 
-  // console.log('animatedCoords', animatedCoords)
-  // const interpolated = animatedCoords.ys.interpolate((...coords) => coords);
-  // console.log('interpolated', interpolated);
-
-
-
-
   return (
-    <svg>
+    <svg style={{ height: chartHeight, overflow: 'visible' }}>
       <animated.path
         d={animatedCoords.coords}
         style={{ fill: 'none', stroke: 'black' }}

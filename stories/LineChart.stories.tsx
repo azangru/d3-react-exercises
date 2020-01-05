@@ -7,3 +7,7 @@ export default {
 };
 
 export const LineChartStory = () => <LineChart />;
+
+LineChartStory.story = {
+  name: 'Animated line chart',
+};
